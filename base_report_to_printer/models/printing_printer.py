@@ -184,10 +184,15 @@ class PrintingPrinter(models.Model):
         _logger.debug(
             'Sending job to CUPS printer %s on %s'
             % (self.system_name, self.server_id.address))
-        connection.printFile(self.system_name,
-                             file_name,
-                             file_name,
-                             options=options)
+        if isinstance(report, str):
+            report = self.env['ir.actions.report']._get_report_from_name(report)
+        name = f"{self.env.user.firstname[:3]} {report.name}" if report else file_name
+        connection.printFile(
+            self.system_name,
+            file_name,
+            self.env.context.get('print_name', name),
+            options=options
+        )
         _logger.info("Printing job: '%s' on %s" % (
             file_name,
             self.server_id.address,
