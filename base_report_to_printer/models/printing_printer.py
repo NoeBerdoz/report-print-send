@@ -186,7 +186,8 @@ class PrintingPrinter(models.Model):
             % (self.system_name, self.server_id.address))
         if isinstance(report, str):
             report = self.env['ir.actions.report']._get_report_from_name(report)
-        name = f"{self.env.user.firstname[:3]} {report.name}" if report else file_name
+        name = f"{self.env.user.firstname or self.env.user.name[:3]} {report.name}"\
+            if report else file_name
         connection.printFile(
             self.system_name,
             file_name,
