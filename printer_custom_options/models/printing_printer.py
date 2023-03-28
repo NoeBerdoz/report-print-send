@@ -108,10 +108,7 @@ class PrintingPrinter(models.Model):
         options = super().print_options(report=report, **print_opts)
 
         if report is not None:
-            # Some modules pass report_name instead of the report.
-            full_report = self.env['ir.actions.report']._get_report_from_name(report) \
-                if isinstance(report, str) else report
-            for printer_option in full_report.printer_options:
-                options[
-                    printer_option.option_key] = printer_option.option_value
+            for printer_option in report.printer_options:
+                options[printer_option.option_key] = printer_option.option_value
+
         return options
