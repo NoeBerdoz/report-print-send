@@ -169,7 +169,7 @@ class PrintingPrinter(models.Model):
         for option, value in print_opts.items():
             try:
                 options.update(getattr(
-                    self, '_set_option_%s' % option)(report, value))
+                    self, '_set_option_%s' % option)(report.report_name, value))
             except AttributeError:
                 options[option] = str(value)
         return options
@@ -184,8 +184,6 @@ class PrintingPrinter(models.Model):
         _logger.debug(
             'Sending job to CUPS printer %s on %s'
             % (self.system_name, self.server_id.address))
-        if isinstance(report, str):
-            report = self.env['ir.actions.report']._get_report_from_name(report)
         name = f"{self.env.user.firstname or self.env.user.name[:3]} {report.name}"\
             if report else file_name
         connection.printFile(
