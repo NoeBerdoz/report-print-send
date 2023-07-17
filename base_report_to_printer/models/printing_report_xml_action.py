@@ -10,52 +10,59 @@ from odoo.exceptions import UserError
 
 
 class PrintingReportXmlAction(models.Model):
-    _name = 'printing.report.xml.action'
-    _description = 'Printing Report Printing Actions'
+    _name = "printing.report.xml.action"
+    _description = "Printing Report Printing Actions"
 
-    report_id = fields.Many2one(comodel_name='ir.actions.report',
-                                string='Report',
-                                required=True,
-                                ondelete='cascade')
-    user_id = fields.Many2one(comodel_name='res.users',
-                              string='User',
-                              ondelete='cascade')
-    language_id = fields.Many2one('res.lang', 'Language')
+    report_id = fields.Many2one(
+        comodel_name="ir.actions.report",
+        string="Report",
+        required=True,
+        ondelete="cascade",
+    )
+    user_id = fields.Many2one(
+        comodel_name="res.users", string="User", ondelete="cascade"
+    )
+    language_id = fields.Many2one("res.lang", "Language")
     action = fields.Selection(
-        selection=lambda s: s.env['printing.action']._available_action_types(),
+        selection=lambda s: s.env["printing.action"]._available_action_types(),
         required=True,
     )
-    printer_id = fields.Many2one(comodel_name='printing.printer',
-                                 string='Printer')
+    printer_id = fields.Many2one(comodel_name="printing.printer", string="Printer")
 
     printer_input_tray_id = fields.Many2one(
-        comodel_name='printing.tray.input',
-        string='Paper Source',
+        comodel_name="printing.tray.input",
+        string="Paper Source",
         domain="[('printer_id', '=', printer_id)]",
-        oldname="printer_tray_id"
+        oldname="printer_tray_id",
     )
     printer_output_tray_id = fields.Many2one(
-        comodel_name='printing.tray.output',
-        string='Output Bin',
+        comodel_name="printing.tray.output",
+        string="Output Bin",
         domain="[('printer_id', '=', printer_id)]",
     )
 
-    _sql_constraints = [(
-        'unique_configuration', 'unique(report_id,user_id,language_id)',
-        'There is already an action defined for this user/language.'
-    )]
+    _sql_constraints = [
+        (
+            "unique_configuration",
+            "unique(report_id,user_id,language_id)",
+            "There is already an action defined for this user/language.",
+        )
+    ]
 
-    @api.constrains('user_id', 'language_id')
+    @api.constrains("user_id", "language_id")
     def check_action(self):
         for action in self:
             if not action.user_id and not action.language_id:
-                raise UserError(_(
-                    "You should set a user or a language for which this action "
-                    "applies to."))
+                raise UserError(
+                    _(
+                        "You should set a user or a language for which this action "
+                        "applies to."
+                    )
+                )
 
-    @api.onchange('printer_id')
+    @api.onchange("printer_id")
     def onchange_printer_id(self):
-        """ Reset the tray when the printer is changed """
+        """Reset the tray when the printer is changed"""
         self.printer_input_tray_id = False
         self.printer_output_tray_id = False
 
@@ -67,10 +74,10 @@ class PrintingReportXmlAction(models.Model):
         if not action:
             return {}
         return {
-            'action': action.action,
-            'printer': action.printer_id,
-            'input_tray': action.printer_input_tray_id.system_name,
-            'output_tray': self.printer_output_tray_id.system_name
+            "action": action.action,
+            "printer": action.printer_id,
+            "input_tray": action.printer_input_tray_id.system_name,
+            "output_tray": self.printer_output_tray_id.system_name,
         }
 
     @api.multi
@@ -89,7 +96,8 @@ class PrintingReportXmlAction(models.Model):
                     action = user_action
                 else:
                     user_language_action = user_action.filtered(
-                        lambda a: a.language_id.code == self.env.lang)
+                        lambda a: a.language_id.code == self.env.lang
+                    )
                     if user_language_action:
                         action = user_language_action
             else:

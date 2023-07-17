@@ -7,64 +7,74 @@ from odoo.tests import common
 @common.at_install(False)
 @common.post_install(True)
 class TestResUsers(common.TransactionCase):
-
     def setUp(self):
         super(TestResUsers, self).setUp()
-        self.user_vals = {'name': 'Test',
-                          'login': 'login',
-                          }
+        self.user_vals = {
+            "name": "Test",
+            "login": "login",
+        }
 
     def new_record(self):
-        return self.env['res.users'].create(self.user_vals)
+        return self.env["res.users"].create(self.user_vals)
 
     def test_available_action_types_excludes_user_default(self):
-        """ It should not contain `user_default` in avail actions """
-        self.user_vals['printing_action'] = 'user_default'
+        """It should not contain `user_default` in avail actions"""
+        self.user_vals["printing_action"] = "user_default"
         with self.assertRaises(ValueError):
             self.new_record()
 
     def test_available_action_types_includes_something_else(self):
-        """ It should still contain other valid keys """
-        self.user_vals['printing_action'] = 'server'
+        """It should still contain other valid keys"""
+        self.user_vals["printing_action"] = "server"
         self.assertTrue(self.new_record())
 
     def test_onchange_printer_tray_id_empty(self):
-        user = self.env['res.users'].new({
-            'printer_input_tray_id': False,
-            'printer_output_tray_id': False,
-        })
+        user = self.env["res.users"].new(
+            {
+                "printer_input_tray_id": False,
+                "printer_output_tray_id": False,
+            }
+        )
         user.onchange_printing_printer_id()
         self.assertFalse(user.printer_input_tray_id)
         self.assertFalse(user.printer_output_tray_id)
 
     def test_onchange_printer_tray_id_not_empty(self):
-        server = self.env['printing.server'].create({})
-        printer = self.env['printing.printer'].create({
-            'name': 'Printer',
-            'server_id': server.id,
-            'system_name': 'Sys Name',
-            'default': True,
-            'status': 'unknown',
-            'status_message': 'Msg',
-            'model': 'res.users',
-            'location': 'Location',
-            'uri': 'URI',
-        })
-        input_tray = self.env['printing.tray.input'].create({
-            'name': 'Tray',
-            'system_name': 'TrayName',
-            'printer_id': printer.id,
-        })
-        output_tray = self.env['printing.tray.output'].create({
-            'name': 'Tray',
-            'system_name': 'TrayName',
-            'printer_id': printer.id,
-        })
+        server = self.env["printing.server"].create({})
+        printer = self.env["printing.printer"].create(
+            {
+                "name": "Printer",
+                "server_id": server.id,
+                "system_name": "Sys Name",
+                "default": True,
+                "status": "unknown",
+                "status_message": "Msg",
+                "model": "res.users",
+                "location": "Location",
+                "uri": "URI",
+            }
+        )
+        input_tray = self.env["printing.tray.input"].create(
+            {
+                "name": "Tray",
+                "system_name": "TrayName",
+                "printer_id": printer.id,
+            }
+        )
+        output_tray = self.env["printing.tray.output"].create(
+            {
+                "name": "Tray",
+                "system_name": "TrayName",
+                "printer_id": printer.id,
+            }
+        )
 
-        user = self.env['res.users'].new({
-            'printer_input_tray_id': input_tray.id,
-            'printer_output_tray_id': output_tray.id,
-        })
+        user = self.env["res.users"].new(
+            {
+                "printer_input_tray_id": input_tray.id,
+                "printer_output_tray_id": output_tray.id,
+            }
+        )
         self.assertEqual(user.printer_input_tray_id, input_tray)
         self.assertEqual(user.printer_output_tray_id, output_tray)
         user.onchange_printing_printer_id()

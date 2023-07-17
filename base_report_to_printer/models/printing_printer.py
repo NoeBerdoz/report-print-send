@@ -19,7 +19,7 @@ _logger = logging.getLogger(__name__)
 try:
     import cups
 except ImportError:
-    _logger.debug('Cannot `import cups`.')
+    _logger.debug("Cannot `import cups`.")
 
 
 class PrintingPrinter(models.Model):
@@ -27,69 +27,75 @@ class PrintingPrinter(models.Model):
     Printers
     """
 
-    _name = 'printing.printer'
-    _description = 'Printer'
-    _order = 'name'
+    _name = "printing.printer"
+    _description = "Printer"
+    _order = "name"
 
     name = fields.Char(required=True, index=True)
     server_id = fields.Many2one(
-        comodel_name='printing.server', string='Server', required=True,
-        help='Server used to access this printer.')
+        comodel_name="printing.server",
+        string="Server",
+        required=True,
+        help="Server used to access this printer.",
+    )
     job_ids = fields.One2many(
-        comodel_name='printing.job', inverse_name='printer_id', string='Jobs',
-        help='Jobs printed on this printer.')
+        comodel_name="printing.job",
+        inverse_name="printer_id",
+        string="Jobs",
+        help="Jobs printed on this printer.",
+    )
     system_name = fields.Char(required=True, index=True)
     default = fields.Boolean(readonly=True)
     status = fields.Selection(
         selection=[
-            ('unavailable', 'Unavailable'),
-            ('printing', 'Printing'),
-            ('unknown', 'Unknown'),
-            ('available', 'Available'),
-            ('error', 'Error'),
-            ('server-error', 'Server Error'),
+            ("unavailable", "Unavailable"),
+            ("printing", "Printing"),
+            ("unknown", "Unknown"),
+            ("available", "Available"),
+            ("error", "Error"),
+            ("server-error", "Server Error"),
         ],
         required=True,
         readonly=True,
-        default='unknown')
+        default="unknown",
+    )
     status_message = fields.Char(readonly=True)
     model = fields.Char(readonly=True)
     location = fields.Char(readonly=True)
-    uri = fields.Char(string='URI', readonly=True)
-    input_tray_ids = fields.One2many(comodel_name='printing.tray.input',
-                                     inverse_name='printer_id',
-                                     string='Paper Sources',
-                                     oldname='tray_ids')
-    output_tray_ids = fields.One2many(comodel_name='printing.tray.output',
-                                      inverse_name='printer_id',
-                                      string='Output trays')
+    uri = fields.Char(string="URI", readonly=True)
+    input_tray_ids = fields.One2many(
+        comodel_name="printing.tray.input",
+        inverse_name="printer_id",
+        string="Paper Sources",
+        oldname="tray_ids",
+    )
+    output_tray_ids = fields.One2many(
+        comodel_name="printing.tray.output",
+        inverse_name="printer_id",
+        string="Output trays",
+    )
 
     @api.multi
     def _prepare_update_from_cups(self, cups_connection, cups_printer):
-        mapping = {
-            3: 'available',
-            4: 'printing',
-            5: 'error'
-        }
+        mapping = {3: "available", 4: "printing", 5: "error"}
         vals = {
-            'name': cups_printer['printer-info'],
-            'model': cups_printer.get('printer-make-and-model', False),
-            'location': cups_printer.get('printer-location', False),
-            'uri': cups_printer.get('device-uri', False),
-            'status': mapping.get(cups_printer.get(
-                'printer-state'), 'unknown'),
-            'status_message': cups_printer.get('printer-state-message', ''),
+            "name": cups_printer["printer-info"],
+            "model": cups_printer.get("printer-make-and-model", False),
+            "location": cups_printer.get("printer-location", False),
+            "uri": cups_printer.get("device-uri", False),
+            "status": mapping.get(cups_printer.get("printer-state"), "unknown"),
+            "status_message": cups_printer.get("printer-state-message", ""),
         }
-        printer_uri = cups_printer['printer-uri-supported']
-        printer_system_name = printer_uri[printer_uri.rfind('/') + 1:]
+        printer_uri = cups_printer["printer-uri-supported"]
+        printer_system_name = printer_uri[printer_uri.rfind("/") + 1 :]
         ppd_info = cups_connection.getPPD3(printer_system_name)
         ppd_path = ppd_info[2]
         if not ppd_path:
             return vals
 
         ppd = cups.PPD(ppd_path)
-        input_options = ppd.findOption('InputSlot')
-        output_options = ppd.findOption('OutputBin')
+        input_options = ppd.findOption("InputSlot")
+        output_options = ppd.findOption("OutputBin")
         try:
             os.unlink(ppd_path)
         except OSError as err:
@@ -98,35 +104,39 @@ class PrintingPrinter(models.Model):
             if err.errno != errno.ENOENT:
                 raise
         if input_options:
-            vals['input_tray_ids'] = [
-                (0, 0, {'name': opt['text'], 'system_name': opt['choice']})
+            vals["input_tray_ids"] = [
+                (0, 0, {"name": opt["text"], "system_name": opt["choice"]})
                 for opt in input_options.choices
-                if opt['choice'] not in self.input_tray_ids.mapped('system_name')
+                if opt["choice"] not in self.input_tray_ids.mapped("system_name")
             ]
-            trays = [opt['choice'] for opt in input_options.choices]
-            vals['input_tray_ids'].extend([
-                (2, tray.id)
-                for tray in self.input_tray_ids
-                if tray.system_name not in trays
-            ])
+            trays = [opt["choice"] for opt in input_options.choices]
+            vals["input_tray_ids"].extend(
+                [
+                    (2, tray.id)
+                    for tray in self.input_tray_ids
+                    if tray.system_name not in trays
+                ]
+            )
 
         if output_options:
-            vals['output_tray_ids'] = [
-                (0, 0, {'name': opt['text'], 'system_name': opt['choice']})
+            vals["output_tray_ids"] = [
+                (0, 0, {"name": opt["text"], "system_name": opt["choice"]})
                 for opt in output_options.choices
-                if opt['choice'] not in self.output_tray_ids.mapped('system_name')
+                if opt["choice"] not in self.output_tray_ids.mapped("system_name")
             ]
-            trays = [opt['choice'] for opt in output_options.choices]
-            vals['output_tray_ids'].extend([
-                (2, tray.id)
-                for tray in self.output_tray_ids
-                if tray.system_name not in trays
-            ])
+            trays = [opt["choice"] for opt in output_options.choices]
+            vals["output_tray_ids"].extend(
+                [
+                    (2, tray.id)
+                    for tray in self.output_tray_ids
+                    if tray.system_name not in trays
+                ]
+            )
         return vals
 
     @api.multi
     def print_document(self, report, content, **print_opts):
-        """ Print a file
+        """Print a file
         Format could be pdf, qweb-pdf, raw, ...
         """
         self.ensure_one()
@@ -136,12 +146,11 @@ class PrintingPrinter(models.Model):
         finally:
             os.close(fd)
 
-        return self.print_file(
-            file_name, report=report, **print_opts)
+        return self.print_file(file_name, report=report, **print_opts)
 
     @staticmethod
     def _set_option_doc_format(report, value):
-        return {'raw': 'True'} if value == 'raw' else {}
+        return {"raw": "True"} if value == "raw" else {}
 
     # Backwards compatibility of builtin used as kwarg
     _set_option_format = _set_option_doc_format
@@ -150,11 +159,11 @@ class PrintingPrinter(models.Model):
     def _set_option_input_tray(self, report, value):
         """Note we use self here as some older PPD use tray
         rather than InputSlot so we may need to query printer in override"""
-        return {'InputSlot': str(value)} if value else {}
+        return {"InputSlot": str(value)} if value else {}
 
     @api.multi
     def _set_option_output_tray(self, report, value):
-        return {'OutputBin': str(value)} if value else {}
+        return {"OutputBin": str(value)} if value else {}
 
     @staticmethod
     def _set_option_noop(report, value):
@@ -168,34 +177,42 @@ class PrintingPrinter(models.Model):
         options = {}
         for option, value in print_opts.items():
             try:
-                options.update(getattr(
-                    self, '_set_option_%s' % option)(report.report_name, value))
+                options.update(
+                    getattr(self, "_set_option_%s" % option)(report.report_name, value)
+                )
             except AttributeError:
                 options[option] = str(value)
         return options
 
     @api.multi
     def print_file(self, file_name, report=None, **print_opts):
-        """ Print a file """
+        """Print a file"""
         self.ensure_one()
         connection = self.server_id._open_connection(raise_on_error=True)
         options = self.print_options(report=report, **print_opts)
 
         _logger.debug(
-            'Sending job to CUPS printer %s on %s'
-            % (self.system_name, self.server_id.address))
-        name = f"{self.env.user.firstname or self.env.user.name[:3]} {report.name}"\
-            if report else file_name
+            "Sending job to CUPS printer %s on %s"
+            % (self.system_name, self.server_id.address)
+        )
+        name = (
+            f"{self.env.user.firstname or self.env.user.name[:3]} {report.name}"
+            if report
+            else file_name
+        )
         connection.printFile(
             self.system_name,
             file_name,
-            self.env.context.get('print_name', name),
-            options=options
+            self.env.context.get("print_name", name),
+            options=options,
         )
-        _logger.info("Printing job: '%s' on %s" % (
-            file_name,
-            self.server_id.address,
-        ))
+        _logger.info(
+            "Printing job: '%s' on %s"
+            % (
+                file_name,
+                self.server_id.address,
+            )
+        )
         return True
 
     @api.multi
@@ -203,19 +220,19 @@ class PrintingPrinter(models.Model):
         if not self:
             return
         self.ensure_one()
-        default_printers = self.search([('default', '=', True)])
+        default_printers = self.search([("default", "=", True)])
         default_printers.unset_default()
-        self.write({'default': True})
+        self.write({"default": True})
         return True
 
     @api.multi
     def unset_default(self):
-        self.write({'default': False})
+        self.write({"default": False})
         return True
 
     @api.multi
     def get_default(self):
-        return self.search([('default', '=', True)], limit=1)
+        return self.search([("default", "=", True)], limit=1)
 
     @api.multi
     def action_cancel_all_jobs(self):
@@ -226,11 +243,10 @@ class PrintingPrinter(models.Model):
     def cancel_all_jobs(self, purge_jobs=False):
         for printer in self:
             connection = printer.server_id._open_connection()
-            connection.cancelAllJobs(
-                name=printer.system_name, purge_jobs=purge_jobs)
+            connection.cancelAllJobs(name=printer.system_name, purge_jobs=purge_jobs)
 
         # Update jobs' states into Odoo
-        self.mapped('server_id').update_jobs(which='completed')
+        self.mapped("server_id").update_jobs(which="completed")
 
         return True
 
@@ -241,7 +257,7 @@ class PrintingPrinter(models.Model):
             connection.enablePrinter(printer.system_name)
 
         # Update printers' stats into Odoo
-        self.mapped('server_id').update_printers()
+        self.mapped("server_id").update_printers()
 
         return True
 
@@ -252,6 +268,6 @@ class PrintingPrinter(models.Model):
             connection.disablePrinter(printer.system_name)
 
         # Update printers' stats into Odoo
-        self.mapped('server_id').update_printers()
+        self.mapped("server_id").update_printers()
 
         return True
