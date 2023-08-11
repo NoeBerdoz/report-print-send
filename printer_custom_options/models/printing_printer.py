@@ -4,7 +4,7 @@ import errno
 import logging
 import os
 
-from odoo import api, fields, models
+from odoo import fields, models
 
 _logger = logging.getLogger(__name__)
 
@@ -47,7 +47,6 @@ class PrintingPrinter(models.Model):
             if err.errno != errno.ENOENT:
                 raise
 
-    @api.multi
     def _prepare_update_from_cups(self, cups_connection, cups_printer):
         vals = super()._prepare_update_from_cups(cups_connection, cups_printer)
 
@@ -99,7 +98,6 @@ class PrintingPrinter(models.Model):
             not in current_option_keys
         ]
 
-    @api.multi
     def print_options(self, report=None, **print_opts):
         # Use lpoptions to have an exhaustive list of the supported options
         options = super().print_options(report=report, **print_opts)

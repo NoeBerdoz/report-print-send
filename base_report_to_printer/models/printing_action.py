@@ -22,5 +22,5 @@ class PrintingAction(models.Model):
 
     name = fields.Char(required=True)
     action_type = fields.Selection(
-        selection=_available_action_types, string="Type", required=True, oldname="type"
+        selection=_available_action_types, string="Type", required=True
     )

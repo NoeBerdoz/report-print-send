@@ -33,7 +33,6 @@ class PrintingReportXmlAction(models.Model):
         comodel_name="printing.tray.input",
         string="Paper Source",
         domain="[('printer_id', '=', printer_id)]",
-        oldname="printer_tray_id",
     )
     printer_output_tray_id = fields.Many2one(
         comodel_name="printing.tray.output",
@@ -66,7 +65,6 @@ class PrintingReportXmlAction(models.Model):
         self.printer_input_tray_id = False
         self.printer_output_tray_id = False
 
-    @api.multi
     def behaviour(self):
         action = self
         if len(action) > 1:
@@ -80,7 +78,6 @@ class PrintingReportXmlAction(models.Model):
             "output_tray": self.printer_output_tray_id.system_name,
         }
 
-    @api.multi
     def select_action(self):
         """
         Returns the action that makes the most sense for the print depending

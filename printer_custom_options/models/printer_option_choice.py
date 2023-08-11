@@ -19,7 +19,6 @@ class PrinterOptionChoice(models.Model):
         ondelete="cascade",
     )
 
-    @api.multi
     @api.depends("option_key", "option_value")
     def _compute_composite_key(self):
         """Composite key for a printing option key-value pair."""

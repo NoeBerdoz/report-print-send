@@ -3,15 +3,12 @@
 
 {
     "name": "Printer ZPL II",
-    "version": "12.0.1.0.0",
+    "version": "14.0.1.0.0",
     "category": "Printer",
     "author": "SUBTENO-IT, FLorent de Labarre, "
     "Apertoso NV, Odoo Community Association (OCA)",
     "website": "http://www.syleam.fr/",
     "license": "AGPL-3",
-    "external_dependencies": {
-        "python": ["zpl2"],
-    },
     "depends": [
         "base_report_to_printer",
     ],
@@ -21,5 +18,8 @@
         "wizard/print_record_label.xml",
         "wizard/wizard_import_zpl2.xml",
     ],
+    "external_dependencies": {
+        "python": ["zpl2"],
+    },
     "installable": True,
 }

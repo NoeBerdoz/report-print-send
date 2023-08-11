@@ -71,7 +71,6 @@ class PrintingLabelZpl2Component(models.Model):
         string="Type",
         required=True,
         default="text",
-        oldname="type",
         help="Type of content, simple text or barcode.",
     )
     font = fields.Selection(

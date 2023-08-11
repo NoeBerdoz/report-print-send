@@ -23,7 +23,6 @@ class IrActionsReport(models.Model):
         comodel_name="printing.tray.input",
         string="Paper Source",
         domain="[('printer_id', '=', printing_printer_id)]",
-        oldname="printer_tray_id",
     )
     printer_output_tray_id = fields.Many2one(
         comodel_name="printing.tray.output",
@@ -59,7 +58,6 @@ class IrActionsReport(models.Model):
         }
         return serializable_result
 
-    @api.multi
     def _get_user_default_print_behaviour(self):
         printer_obj = self.env["printing.printer"]
         user = self.env.user
@@ -74,7 +72,6 @@ class IrActionsReport(models.Model):
             else False,
         )
 
-    @api.multi
     def _get_report_default_print_behaviour(self):
         result = {}
         report_action = self.property_printing_action_id
@@ -88,7 +85,6 @@ class IrActionsReport(models.Model):
             result["output_tray"] = self.printer_output_tray_id.system_name
         return result
 
-    @api.multi
     def behaviour(self):
         self.ensure_one()
         printing_act_obj = self.env["printing.report.xml.action"]
@@ -112,7 +108,6 @@ class IrActionsReport(models.Model):
             result.update({k: v for k, v in print_action.behaviour().items() if v})
         return result
 
-    @api.multi
     def print_document(self, record_ids, data=None):
         """Print a document, do not return the document file"""
         document, doc_format = self.with_context(
@@ -128,7 +123,6 @@ class IrActionsReport(models.Model):
             self, document, doc_format=self.report_type, **behaviour
         )
 
-    @api.multi
     def _can_print_report(self, behaviour, printer, document):
         """Predicate that decide if report can be sent to printer
 
@@ -141,7 +135,6 @@ class IrActionsReport(models.Model):
             return True
         return False
 
-    @api.noguess
     def report_action(self, docids, data=None, config=True):
         res = super().report_action(docids, data=data, config=config)
         if not res.get("id"):

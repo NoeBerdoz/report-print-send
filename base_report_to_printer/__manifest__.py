@@ -7,7 +7,7 @@
 
 {
     "name": "Report to printer",
-    "version": "12.0.1.2.0",
+    "version": "14.0.1.2.0",
     "category": "Generic Modules/Base",
     "author": "Agile Business Group & Domsense, Pegueroles SCP, NaN,"
     " LasLabs, Camptocamp, Odoo Community Association (OCA),"
@@ -18,6 +18,7 @@
     "data": [
         "data/printing_data.xml",
         "security/security.xml",
+        "security/ir.model.access.csv",
         "views/assets.xml",
         "views/printing_printer.xml",
         "views/printing_server.xml",
@@ -30,6 +31,6 @@
     "installable": True,
     "application": False,
     "external_dependencies": {
-        "python": ["cups"],
+        "python": ["pycups"],
     },
 }

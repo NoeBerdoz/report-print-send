@@ -46,7 +46,6 @@ class ResUsers(models.Model):
         comodel_name="printing.tray.input",
         string="Default Printer Paper Source",
         domain="[('printer_id', '=', printing_printer_id)]",
-        oldname="printer_tray_id",
     )
     printer_output_tray_id = fields.Many2one(
         comodel_name="printing.tray.output",

@@ -10,7 +10,6 @@ class IrActionsReportXml(models.Model):
         "printer.option.choice", string="Printer Options"
     )
 
-    @api.multi
     @api.onchange("printing_printer_id")
     def on_change_printer(self):
         for report in self:

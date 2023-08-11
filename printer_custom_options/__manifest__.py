@@ -3,7 +3,7 @@
 
 {
     "name": "Report to printer - Custom Printer Options",
-    "version": "12.0.1.0.0",
+    "version": "14.0.1.0.0",
     "category": "Printer",
     "author": "Compassion CH, Odoo Community Association (OCA)",
     "website": "https://github.com/OCA/report-print-send",
@@ -15,7 +15,7 @@
         "security/ir.model.access.csv",
     ],
     "external_dependencies": {
-        "python": ["cups"],
+        "python": ["pycups"],
     },
     "installable": True,
     "application": False,

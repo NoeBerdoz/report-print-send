@@ -325,7 +325,6 @@ class PrintingLabelZpl2(models.Model):
             label.action_window_id = self.env["ir.actions.act_window"].create(
                 {
                     "name": _("Print Label"),
-                    "src_model": label.model_id.model,
                     "binding_model_id": label.model_id.id,
                     "res_model": "wizard.print.record.label",
                     "view_mode": "form",
@@ -342,7 +341,6 @@ class PrintingLabelZpl2(models.Model):
     def import_zpl2(self):
         self.ensure_one()
         return {
-            "view_type": "form",
             "view_mode": "form",
             "res_model": "wizard.import.zpl2",
             "type": "ir.actions.act_window",
