@@ -25,10 +25,21 @@ class TestIrActionsReportXml(TransactionCase):
         )
 
     def new_printing_action(self):
+        # Retrieves groups rights
+        printing_groups = self.env['res.groups'].search([
+            ('name', 'like', 'Printing')
+        ])
+        # Find a user with printing rights
+        printing_user = self.env['res.users'].sudo().search([
+            ('groups_id', 'in', printing_groups.ids),
+            ('groups_id.rule_groups.perm_write', '=', True)
+        ], limit=1)
+
+        #       "user_id": printing_user.id,
         return self.env["printing.report.xml.action"].create(
             {
                 "report_id": self.report.id,
-                "user_id": self.env.ref("base.user_demo").id,
+                "user_id": self.env.ref("base.user_admin").id,
                 "action": "server",
             }
         )

@@ -23,9 +23,11 @@ class PrinterTray(models.AbstractModel):
 
 class PrinterInputTray(models.Model):
     _name = "printing.tray.input"
+    _description = "Printer Tray Input"
     _inherit = "printing.tray"
 
 
 class PrinterOutputTray(models.Model):
     _name = "printing.tray.output"
+    _description = "Printer Tray Output"
     _inherit = "printing.tray"

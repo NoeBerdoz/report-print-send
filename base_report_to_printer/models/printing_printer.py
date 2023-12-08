@@ -189,8 +189,8 @@ class PrintingPrinter(models.Model):
             % (self.system_name, self.server_id.address)
         )
         name = (
-            f"{self.env.user.firstname or self.env.user.name[:3]} {report.name}"
-            if report
+            f"{self.env.user.name} {report.name}"
+            if report and hasattr(report, 'name')
             else file_name
         )
         connection.printFile(

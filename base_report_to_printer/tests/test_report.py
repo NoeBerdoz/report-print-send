@@ -4,11 +4,11 @@
 
 import mock
 from odoo.tests import common
+from odoo.tests import tagged
 from odoo import exceptions
 
 
-@common.at_install(False)
-@common.post_install(True)
+@tagged('post_install', '-at_install')
 class TestReport(common.HttpCase):
     def setUp(self):
         super(TestReport, self).setUp()

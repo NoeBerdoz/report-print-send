@@ -69,7 +69,7 @@
         <field name="name">printing.printer.tree (in base_report_to_printer)</field>
         <field name="model">printing.printer</field>
         <field name="arch" type="xml">
-            <tree string="Printers" colors="green:status=='available'; orange:status=='printing'; red:1;">
+            <tree string="Printers" decoration-warning="status=='printing'" decoration-danger="status!='available' and status!='printing'">
                 <field name="default"/>
                 <field name="name"/>
                 <field name="system_name"/>
