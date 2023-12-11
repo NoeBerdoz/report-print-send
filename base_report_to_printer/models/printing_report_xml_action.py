@@ -5,7 +5,8 @@
 # Copyright (C) 2013-2014 Camptocamp (<http://www.camptocamp.com>)
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import api, fields, models
+from odoo import api, fields, models, _
+from odoo.exceptions import ValidationError
 
 
 class PrintingReportXmlAction(models.Model):
@@ -27,16 +28,23 @@ class PrintingReportXmlAction(models.Model):
     )
     printer_id = fields.Many2one(comodel_name="printing.printer", string="Printer")
 
-    printer_tray_id = fields.Many2one(
-        comodel_name="printing.tray",
+    printer_input_tray_id = fields.Many2one(
+        comodel_name="printing.tray.input",
         string="Paper Source",
         domain="[('printer_id', '=', printer_id)]",
     )
+    printer_output_tray_id = fields.Many2one(
+        comodel_name="printing.tray.output",
+        string="Output Bin",
+        domain="[('printer_id', '=', printer_id)]",
+    )
+
 
     @api.onchange("printer_id")
     def onchange_printer_id(self):
         """Reset the tray when the printer is changed"""
-        self.printer_tray_id = False
+        self.printer_input_tray_id = False
+        self.printer_output_tray_id = False
 
     def behaviour(self):
         if not self:

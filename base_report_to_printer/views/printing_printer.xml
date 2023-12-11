@@ -78,18 +78,26 @@
                         <field name="status_message" />
                     </group>
                     <group string="Trays" name="trays">
-                        <field name="tray_ids" nolabel="1">
+                        <field name="input_tray_ids" nolabel="1">
                             <form>
                                 <group name="name_fields">
-                                    <field name="name" />
-                                    <field name="system_name" />
+                                    <field name="name"/>
+                                    <field name="system_name"/>
+                                </group>
+                            </form>
+                        </field>
+                        <field name="output_tray_ids" nolabel="1">
+                            <form>
+                                <group name="name_fields">
+                                    <field name="name"/>
+                                    <field name="system_name"/>
                                 </group>
                             </form>
                         </field>
                     </group>
                     <group name="jobs">
-                        <separator string="Jobs" colspan="2" />
-                        <field name="job_ids" nolabel="1" />
+                        <separator string="Jobs" colspan="2"/>
+                        <field name="job_ids" nolabel="1"/>
                     </group>
                 </sheet>
             </form>
