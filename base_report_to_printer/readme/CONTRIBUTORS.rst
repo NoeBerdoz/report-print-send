@@ -12,3 +12,5 @@
 * Rod Schouteden <rod@schout-it.be>
 * Alexandre Fayolle <alexandre.fayolle@camptocamp.com>
 * Akim Juillerat <akim.juillerat@camptocamp.com>
+* Noé Berdoz <nberdoz@compassion.ch>
+* Emanuel Cino <ecino@compassion.ch>

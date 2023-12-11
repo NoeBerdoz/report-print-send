@@ -9,14 +9,11 @@
             <form string="Report Printing Actions">
                 <group col="2">
                     <field name="user_id" />
+                    <field name="language_id" />
                     <field name="action" />
                     <field name="printer_id" select="1" />
-                    <field name="printer_tray_id" />
-                    <field name="user_id"/>
-                    <field name="action"/>
-                    <field name="printer_id" select="1"/>
-                    <field name="printer_input_tray_id"/>
-                    <field name="printer_output_tray_id"/>
+                    <field name="printer_input_tray_id" />
+                    <field name="printer_output_tray_id" />
                 </group>
             </form>
         </field>
@@ -29,14 +26,11 @@
         <field name="arch" type="xml">
             <tree>
                 <field name="user_id" />
+                <field name="language_id" />
                 <field name="action" />
                 <field name="printer_id" />
-                <field name="printer_tray_id" />
-                <field name="user_id"/>
-                <field name="action"/>
-                <field name="printer_id"/>
-                <field name="printer_input_tray_id"/>
-                <field name="printer_output_tray_id"/>
+                <field name="printer_input_tray_id" />
+                <field name="printer_output_tray_id" />
             </tree>
         </field>
     </record>
