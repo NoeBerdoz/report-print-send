@@ -1,7 +1,9 @@
 # Copyright 2019 Compassion
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
-import mock
 import types
+
+import mock
+
 from odoo.tests.common import TransactionCase
 
 server_model = "odoo.addons.base_report_to_printer.models.printing_server"
