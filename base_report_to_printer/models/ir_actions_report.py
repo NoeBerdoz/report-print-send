@@ -126,7 +126,7 @@ class IrActionsReport(models.Model):
             )
         method_name = "_render_qweb_%s" % (report_type)
 
-        if data["lang"]:
+        if "lang" in data and data["lang"]:
             document, doc_format = getattr(
                 self.with_context(must_skip_send_to_printer=True,
                                   lang=data["lang"]), method_name
