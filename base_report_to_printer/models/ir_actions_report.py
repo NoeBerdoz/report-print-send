@@ -125,9 +125,17 @@ class IrActionsReport(models.Model):
                 % str(self.report_type)
             )
         method_name = "_render_qweb_%s" % (report_type)
-        document, doc_format = getattr(
-            self.with_context(must_skip_send_to_printer=True), method_name
-        )(record_ids, data=data)
+
+        if "lang" in data and data["lang"]:
+            document, doc_format = getattr(
+                self.with_context(must_skip_send_to_printer=True, lang=data["lang"]),
+                method_name,
+            )(record_ids, data=data)
+        else:
+            document, doc_format = getattr(
+                self.with_context(must_skip_send_to_printer=True), method_name
+            )(record_ids, data=data)
+
         behaviour = self.behaviour()
         printer = behaviour.pop("printer", None)
 
